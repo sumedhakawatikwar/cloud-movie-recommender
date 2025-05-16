@@ -1,0 +1,15 @@
+FROM python:3.8-slim
+
+WORKDIR /srv
+
+COPY Movies4U.py /srv
+COPY SessionState.py /srv
+
+RUN mkdir -p /root/.streamlit && \
+    echo "[server]\nheadless = true\nenableCORS = false\nport = 8501" > /root/.streamlit/config.toml
+
+RUN pip install streamlit redis jsonpickle requests
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "Movies4U.py"]

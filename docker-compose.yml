@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  redis-server:
+    image: redis
+    container_name: redis-server
+    networks:
+      - movie-net
+    ports:
+      - "6379:6379"
+
+  movie-rest-api:
+    build:
+      context: ./rest
+      dockerfile: Dockerfile-rest
+    container_name: movie-rest-api
+    networks:
+      - movie-net
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis-server
+
+  movie-app:
+    build:
+      context: .
+      dockerfile: Dockerfile-app
+    container_name: movie-app
+    environment:
+      - REDIS_HOST=redis-server
+      - REST=movie-rest-api:5000
+    networks:
+      - movie-net
+    ports:
+      - "8501:8501"
+    depends_on:
+      - redis-server
+      - movie-rest-api
+
+networks:
+  movie-net:
+    driver: bridge

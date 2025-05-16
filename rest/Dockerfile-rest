@@ -1,0 +1,13 @@
+FROM python:3.8-slim
+
+WORKDIR /srv
+
+COPY dataset /srv/dataset
+COPY recommendation_rest_server.py /srv
+
+RUN pip install --upgrade pip \
+ && pip install --no-cache-dir flask==2.2.5 redis pandas jsonpickle
+
+EXPOSE 5000
+
+CMD ["python", "recommendation_rest_server.py"]
